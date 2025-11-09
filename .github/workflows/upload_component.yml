@@ -1,29 +1,16 @@
-name: Upload BNO055 Component to IDF Registry
-
+name: Push component to https://components.espressif.com
 on:
   push:
-    tags:
-      - "[0-9]+.[0-9]+.[0-9]+"
-  workflow_dispatch:
-
 jobs:
-  upload:
+  upload_components:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Verify manifest
-        run: test -f ./idf_component.yml
-
-      - name: Upload to ESP Component Registry
+      - uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+      - name: Upload component to the component registry
         uses: espressif/upload-components-ci-action@v2
         with:
-          namespace: adithya-187326
-          components: |
-            bno055: .
-          version: ${{ github.ref_name }}
+          components: "bno055: ." # component_name: directory
+          namespace: "adithya-187326"
+          api_token: ${{ secrets.IDF_COMPONENT_API_TOKEN }}
